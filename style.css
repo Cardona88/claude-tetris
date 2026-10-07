@@ -17,6 +17,22 @@ body {
 
 .wrapper {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  margin-bottom: 16px;
+  /* Degradado con los colores de las piezas (ver game.js) */
+  background: linear-gradient(90deg, #4dd0e1, #ffd54f, #ba68c8, #81c784, #e57373, #7986cb, #ffb74d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
 
 .game-container {
