@@ -47,6 +47,13 @@ const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
 const themeBtn = document.getElementById('theme-toggle');
+const pauseMenu = document.getElementById('pause-menu');
+const pauseMain = document.getElementById('pause-main');
+const pmControlsPanel = document.getElementById('pm-controls-panel');
+const pmResume = document.getElementById('pm-resume');
+const pmControlsBtn = document.getElementById('pm-controls');
+const pmBack = document.getElementById('pm-back');
+const pmStartLevel = document.getElementById('pm-start-level');
 
 let gridColor, highlightColor;
 
@@ -59,7 +66,14 @@ function applyTheme(theme) {
 }
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+const MAX_START_LEVEL = 15;
+let baseLevel = 1; // nivel inicial de la partida en curso (snapshot de startLevel en init)
+let startLevel = 1; // nivel inicial elegido en el menú de pausa (próxima partida)
 let bolts, boltFlash; // cargas de Rayo y efecto visual activo { type, index, until }
+
+function speedFor(lvl) {
+  return Math.max(100, 1000 - (lvl - 1) * 90);
+}
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
@@ -127,8 +141,8 @@ function clearLines() {
     bolts = Math.min(BOLT_MAX, bolts + earned);
     lines += cleared;
     score += (LINE_SCORES[cleared] || 0) * level;
-    level = Math.floor(lines / 10) + 1;
-    dropInterval = Math.max(100, 1000 - (level - 1) * 90);
+    level = baseLevel + Math.floor(lines / 10);
+    dropInterval = speedFor(level);
     updateHUD();
   }
 }
@@ -285,6 +299,7 @@ function endGame() {
   cancelAnimationFrame(animId);
   overlayTitle.textContent = 'GAME OVER';
   overlayScore.textContent = `Puntuación: ${score.toLocaleString()}`;
+  showPauseMenu(false);
   overlay.classList.remove('hidden');
 }
 
@@ -299,6 +314,7 @@ function togglePause() {
     overlayTitle.textContent = 'PAUSA';
     overlayScore.textContent = '';
     overlay.classList.remove('hidden');
+    showPauseMenu(true);
   }
 }
 
@@ -324,25 +340,38 @@ function init() {
   board = createBoard();
   score = 0;
   lines = 0;
-  level = 1;
+  baseLevel = startLevel;
+  level = baseLevel;
   bolts = 0;
   boltFlash = null;
   paused = false;
   gameOver = false;
-  dropInterval = 1000;
+  dropInterval = speedFor(level);
   dropAccum = 0;
   lastTime = performance.now();
   next = randomPiece();
   spawn();
   updateHUD();
   overlay.classList.add('hidden');
+  showPauseMenu(false);
   cancelAnimationFrame(animId);
   animId = requestAnimationFrame(loop);
 }
 
 document.addEventListener('keydown', e => {
-  if (e.code === 'KeyP') { togglePause(); return; }
-  if (paused || gameOver) return;
+  if (e.code === 'KeyP' || e.code === 'Escape') {
+    if (e.repeat) return;
+    togglePause();
+    if (!paused && pauseMenu.contains(document.activeElement)) document.activeElement.blur();
+    return;
+  }
+  if (paused || gameOver) {
+    // Con el menú abierto, evita scroll/activación accidental fuera de los controles del menú
+    if (paused && e.target !== pmStartLevel &&
+        ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.code)) e.preventDefault();
+    if (paused && !pauseMenu.contains(e.target) && e.code === 'Space') e.preventDefault();
+    return;
+  }
   switch (e.code) {
     case 'ArrowLeft':
       if (!collide(current.shape, current.x - 1, current.y)) current.x--;
@@ -377,6 +406,42 @@ themeBtn.addEventListener('click', () => {
   themeBtn.blur(); // evita que Space (hard drop) active el botón
   if (paused || gameOver) { draw(); drawNext(); } // el loop está detenido: repinta
 });
+
+// ---- Menú de pausa ----
+function showPauseMenu(show) {
+  pauseMenu.hidden = !show;
+  restartBtn.hidden = show;
+  if (!show && gameOver) restartBtn.focus();
+  if (show) {
+    showPauseControls(false);
+    pmResume.focus();
+  }
+}
+
+function showPauseControls(show) {
+  pauseMain.hidden = show;
+  pmControlsPanel.hidden = !show;
+  if (show) pmBack.focus(); else if (!pauseMenu.hidden) pmControlsBtn.focus();
+}
+
+function loadStartLevel() {
+  try {
+    const n = parseInt(localStorage.getItem('startLevel'), 10);
+    if (n >= 1 && n <= MAX_START_LEVEL) startLevel = n;
+  } catch (e) {}
+}
+
+for (let i = 1; i <= MAX_START_LEVEL; i++) pmStartLevel.add(new Option(i, i));
+loadStartLevel();
+pmStartLevel.value = startLevel;
+pmStartLevel.addEventListener('change', () => {
+  startLevel = parseInt(pmStartLevel.value, 10);
+  try { localStorage.setItem('startLevel', startLevel); } catch (e) {}
+});
+pmResume.addEventListener('click', () => { pmResume.blur(); togglePause(); });
+document.getElementById('pm-restart').addEventListener('click', e => { e.target.blur(); init(); });
+pmControlsBtn.addEventListener('click', () => showPauseControls(true));
+pmBack.addEventListener('click', () => showPauseControls(false));
 
 applyTheme(document.documentElement.dataset.theme);
 

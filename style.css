@@ -224,3 +224,64 @@ kbd {
 #restart-btn:hover {
   background: var(--accent-hover);
 }
+
+/* ---- Menú de pausa ---- */
+.pause-menu[hidden], .pause-main[hidden], .pm-controls-panel[hidden], #restart-btn[hidden] {
+  display: none;
+}
+
+.pause-main, .pm-controls-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+  min-width: 190px;
+}
+
+.pause-menu button {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 9px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+.pause-menu button:hover { background: var(--accent-hover); }
+.pause-menu button:focus-visible,
+.pm-level select:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+.pm-level {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pm-level select {
+  background: var(--canvas-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 13px;
+}
+
+.pm-hint { font-size: 11px; color: var(--muted); }
+
+.pm-controls-panel ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: left;
+}
+
+.pm-controls-panel li { display: flex; align-items: center; gap: 4px; }
