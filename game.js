@@ -28,6 +28,12 @@ const PIECES = [
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
 
+// Poder Rayo: se gana una carga cada BOLT_EVERY líneas (máx. BOLT_MAX)
+const BOLT_EVERY = 5;
+const BOLT_MAX = 3;
+const BOLT_CELL_SCORE = 20;
+const BOLT_FLASH_MS = 250;
+
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
 const nextCanvas = document.getElementById('next-canvas');
@@ -35,6 +41,7 @@ const nextCtx = nextCanvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const linesEl = document.getElementById('lines');
 const levelEl = document.getElementById('level');
+const boltsEl = document.getElementById('bolts');
 const overlay = document.getElementById('overlay');
 const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
@@ -52,6 +59,7 @@ function applyTheme(theme) {
 }
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+let bolts, boltFlash; // cargas de Rayo y efecto visual activo { type, index, until }
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
@@ -115,12 +123,52 @@ function clearLines() {
     }
   }
   if (cleared) {
+    const earned = Math.floor((lines + cleared) / BOLT_EVERY) - Math.floor(lines / BOLT_EVERY);
+    bolts = Math.min(BOLT_MAX, bolts + earned);
     lines += cleared;
     score += (LINE_SCORES[cleared] || 0) * level;
     level = Math.floor(lines / 10) + 1;
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
     updateHUD();
   }
+}
+
+// Rayo: type 'row' limpia la fila ocupada más baja; 'col' limpia la columna bajo la pieza actual.
+function useBolt(type) {
+  if (bolts <= 0) return;
+  let index, count = 0;
+  if (type === 'row') {
+    index = board.findLastIndex(row => row.some(v => v !== 0));
+    if (index === -1) return;
+    count = board[index].filter(v => v !== 0).length;
+    board.splice(index, 1);
+    board.unshift(new Array(COLS).fill(0));
+  } else {
+    const cols = [];
+    current.shape.forEach(row => row.forEach((v, c) => { if (v) cols.push(current.x + c); }));
+    index = cols[Math.floor(cols.length / 2)];
+    for (let r = 0; r < ROWS; r++) {
+      if (board[r][index]) { board[r][index] = 0; count++; }
+    }
+    if (!count) return;
+  }
+  bolts--;
+  score += count * BOLT_CELL_SCORE * level;
+  boltFlash = { type, index, until: performance.now() + BOLT_FLASH_MS };
+}
+
+function drawBolt() {
+  if (!boltFlash) return;
+  const remaining = boltFlash.until - performance.now();
+  if (remaining <= 0) { boltFlash = null; return; }
+  ctx.globalAlpha = remaining / BOLT_FLASH_MS;
+  ctx.fillStyle = '#fff59d';
+  ctx.shadowColor = '#fff59d';
+  ctx.shadowBlur = 20;
+  if (boltFlash.type === 'row') ctx.fillRect(0, boltFlash.index * BLOCK, COLS * BLOCK, BLOCK);
+  else ctx.fillRect(boltFlash.index * BLOCK, 0, BLOCK, ROWS * BLOCK);
+  ctx.shadowBlur = 0;
+  ctx.globalAlpha = 1;
 }
 
 function ghostY() {
@@ -165,6 +213,7 @@ function updateHUD() {
   scoreEl.textContent = score.toLocaleString();
   linesEl.textContent = lines;
   levelEl.textContent = level;
+  boltsEl.textContent = bolts;
 }
 
 function drawBlock(context, x, y, colorIndex, size, alpha) {
@@ -216,6 +265,8 @@ function draw() {
   for (let r = 0; r < current.shape.length; r++)
     for (let c = 0; c < current.shape[r].length; c++)
       drawBlock(ctx, current.x + c, current.y + r, current.shape[r][c], BLOCK);
+
+  drawBolt();
 }
 
 function drawNext() {
@@ -274,6 +325,8 @@ function init() {
   score = 0;
   lines = 0;
   level = 1;
+  bolts = 0;
+  boltFlash = null;
   paused = false;
   gameOver = false;
   dropInterval = 1000;
@@ -303,6 +356,12 @@ document.addEventListener('keydown', e => {
     case 'ArrowUp':
     case 'KeyX':
       tryRotate();
+      break;
+    case 'KeyZ':
+      useBolt('row');
+      break;
+    case 'KeyC':
+      useBolt('col');
       break;
     case 'Space':
       e.preventDefault();
