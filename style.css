@@ -224,3 +224,21 @@ kbd {
 #restart-btn:hover {
   background: var(--accent-hover);
 }
+
+/* ---- Selector de skin ---- */
+.skin-select {
+  background: var(--canvas-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.skin-select:hover,
+.skin-select:focus {
+  border-color: var(--accent);
+  outline: none;
+}

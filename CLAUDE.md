@@ -42,6 +42,7 @@ Tres archivos, sin módulos/bundler — todo carga vía un único tag `<script s
 - **Limpieza de líneas** (`clearLines`): recorre de abajo hacia arriba, elimina filas completas e inserta filas vacías arriba.
 - **Puntuación**: `LINE_SCORES = [0, 100, 300, 500, 800]` multiplicado por `level` actual; hard drop suma 2 puntos por celda caída, soft drop suma 1 punto por fila.
 - **Nivel/velocidad**: nivel sube cada 10 líneas; `dropInterval = max(100, 1000 - (level-1)*90)` ms.
+- **Skins** (`SKINS`): `retro`, `neon`, `pastel`, `pixel`; cada uno con `colors` (índices 1–7), `bg`/`grid` del canvas (null = tema de la página) y `draw` propio. `drawBlock` delega en el skin actual (`currentSkin`, guardado en `localStorage('skin')`, selector `#skin-select`). El tema claro/oscuro solo controla el chrome de la página.
 - **Ghost piece** (`ghostY`): proyecta la pieza actual hacia abajo hasta su fila de aterrizaje, dibujada con `globalAlpha = 0.2`.
 
 ### Flujo
@@ -50,4 +51,4 @@ Tres archivos, sin módulos/bundler — todo carga vía un único tag `<script s
 
 ### Constantes ajustables (todas en `game.js`)
 
-`COLS`, `ROWS`, `BLOCK` (px por celda), `COLORS`, `LINE_SCORES`, `dropInterval`. Si cambias `COLS`/`ROWS`/`BLOCK`, actualiza también los atributos `width`/`height` de `<canvas id="board">` en `index.html` para que coincidan (`COLS*BLOCK` × `ROWS*BLOCK`).
+`COLS`, `ROWS`, `BLOCK` (px por celda), `COLORS` (paleta del skin retro), `SKINS`, `LINE_SCORES`, `dropInterval`. Si cambias `COLS`/`ROWS`/`BLOCK`, actualiza también los atributos `width`/`height` de `<canvas id="board">` en `index.html` para que coincidan (`COLS*BLOCK` × `ROWS*BLOCK`).
