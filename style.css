@@ -28,7 +28,7 @@ body {
   letter-spacing: 6px;
   margin-bottom: 16px;
   /* Degradado con los colores de las piezas (ver game.js) */
-  background: linear-gradient(90deg, #4dd0e1, #ffd54f, #ba68c8, #81c784, #e57373, #7986cb, #ffb74d);
+  background: linear-gradient(90deg, #4dd0e1, #ffd54f, #ba68c8, #81c784, #e57373, #90caf9, #ffb74d);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
