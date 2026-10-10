@@ -224,3 +224,120 @@ kbd {
 #restart-btn:hover {
   background: var(--accent-hover);
 }
+
+/* ---- Records ---- */
+#start-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--accent);
+}
+
+#start-btn {
+  margin-top: 8px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+#start-btn:hover {
+  background: var(--accent-hover);
+}
+
+.records-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.records-box.hidden,
+.record-form.hidden {
+  display: none;
+}
+
+.record-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.record-row {
+  display: flex;
+  gap: 6px;
+}
+
+#record-name {
+  width: 140px;
+  padding: 6px 8px;
+  background: var(--canvas-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  user-select: text;
+}
+
+#record-save,
+.records-reset {
+  background: var(--canvas-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#record-save:hover,
+.records-reset:hover {
+  border-color: var(--accent);
+}
+
+.records-table {
+  border-collapse: collapse;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  min-width: 260px;
+}
+
+.records-table th,
+.records-table td {
+  padding: 3px 8px;
+  text-align: left;
+  color: var(--text);
+}
+
+.records-table th {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--label);
+}
+
+.records-table td.num {
+  text-align: right;
+}
+
+.records-table tr.mine td {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 700;
+}
+
+.records-table td.empty {
+  text-align: center;
+  color: var(--muted);
+}
+
+.records-stats {
+  font-size: 12px;
+  color: var(--muted);
+}
