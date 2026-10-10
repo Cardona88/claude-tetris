@@ -476,6 +476,7 @@ function showRecords() {
 
 recordForm.addEventListener('submit', e => {
   e.preventDefault();
+  if (!gameOver || recordForm.classList.contains('hidden')) return; // evita guardar dos veces
   const data = loadRecords();
   const entry = {
     name: recordName.value.trim().slice(0, MAX_NAME) || 'Anónimo',
@@ -513,7 +514,7 @@ startBtn.addEventListener('click', () => {
   init();
 });
 
-restartBtn.addEventListener('click', init);
+restartBtn.addEventListener('click', () => { restartBtn.blur(); init(); });
 themeBtn.addEventListener('click', () => {
   applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
   themeBtn.blur(); // evita que Space (hard drop) active el botón

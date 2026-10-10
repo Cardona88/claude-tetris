@@ -46,7 +46,7 @@ Tres archivos, sin módulos/bundler — todo carga vía un único tag `<script s
 
 ### Flujo
 
-`init()` crea el tablero, siembra `next` vía `randomPiece()`, llama `spawn()` (promueve `next` a `current`, genera nuevo `next`), luego inicia el loop de `requestAnimationFrame`. Si una pieza recién generada colisiona de inmediato, dispara `endGame()` y muestra overlay GAME OVER. Input de teclado (listener `keydown`) maneja movimiento/rotación/soft-drop/hard-drop/pausa; `P` alterna pausa independiente del estado game-over.
+Al cargar solo se muestra la pantalla de inicio (`#start-overlay`, tabla de records); `init()` se llama al pulsar Jugar. `init()` crea el tablero, siembra `next` vía `randomPiece()`, llama `spawn()` (promueve `next` a `current`, genera nuevo `next`), luego inicia el loop de `requestAnimationFrame`. Si una pieza recién generada colisiona de inmediato, dispara `endGame()` y muestra overlay GAME OVER. Input de teclado (listener `keydown`) maneja movimiento/rotación/soft-drop/hard-drop/pausa; `P` alterna pausa independiente del estado game-over.
 
 ### Constantes ajustables (todas en `game.js`)
 
