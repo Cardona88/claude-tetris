@@ -264,7 +264,9 @@ function loop(ts) {
     }
   }
   draw();
-  animId = requestAnimationFrame(loop);
+  // endGame() puede ejecutarse dentro de este mismo frame (vía lockPiece → spawn);
+  // cancelAnimationFrame no cancela el frame en curso, así que no re-armar el loop.
+  if (!gameOver) animId = requestAnimationFrame(loop);
 }
 
 function init() {
