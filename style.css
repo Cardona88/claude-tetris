@@ -89,6 +89,31 @@ body {
   cursor: pointer;
 }
 
+.skin-select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: var(--canvas-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Neon: fondo negro para que el glow destaque */
+[data-skin="neon"] #board,
+[data-skin="neon"] #next-canvas {
+  background: #000;
+  border-color: #00f0ff55;
+}
+
+[data-skin="neon"] #board {
+  box-shadow: 0 0 30px #00f0ff44;
+}
+
 .theme-toggle:hover {
   border-color: var(--accent);
 }
