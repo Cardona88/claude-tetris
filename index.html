@@ -80,6 +80,19 @@
             <select id="start-level"></select>
           </label>
         </div>
+        <form id="name-form" class="name-form hidden" autocomplete="off">
+          <label for="name-input">¡Entras al top! Tu nombre:</label>
+          <div class="name-row">
+            <input id="name-input" type="text" maxlength="12" placeholder="Anónimo" />
+            <button id="save-btn" type="submit">Guardar</button>
+          </div>
+        </form>
+        <div id="records" class="records hidden">
+          <span class="label">🏆 RÉCORDS</span>
+          <ol id="records-list"></ol>
+          <p id="records-extra"></p>
+          <button id="reset-records-btn" type="button">Borrar récords</button>
+        </div>
         <button id="restart-btn">Reiniciar</button>
       </div>
     </div>
